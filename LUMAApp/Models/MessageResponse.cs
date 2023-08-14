@@ -1,6 +1,6 @@
 ﻿namespace LUMAApp.Models
 {
-    public class LoginResponse
+    public class MessageResponse
     {
         public string? Message { get; set; }
     }
