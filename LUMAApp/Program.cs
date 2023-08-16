@@ -10,7 +10,7 @@ ConfigurationManager configuration = builder.Configuration;
 
 
 // For Entity Framework
-builder.Services.AddDbContext<Context>(options => options.UseSqlServer(configuration.GetConnectionString("connMSSQL")));
+builder.Services.AddDbContext<Luma1Context>(options => options.UseSqlServer(configuration.GetConnectionString("connMSSQL")));
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "CORS",
