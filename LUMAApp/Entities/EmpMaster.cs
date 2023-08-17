@@ -19,9 +19,4 @@ public partial class EmpMaster
 
     public DateTime? Doj { get; set; }
 
-    public string? Passhash { get; set; }
-
-    public virtual ICollection<EmpCardDetail> EmpCardDetails { get; set; } = new List<EmpCardDetail>();
-
-    public virtual ICollection<EmpIssueDetail> EmpIssueDetails { get; set; } = new List<EmpIssueDetail>();
 }

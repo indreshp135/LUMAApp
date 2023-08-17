@@ -17,5 +17,4 @@ public partial class ItemMaster
 
     public int? ItemValuation { get; set; }
 
-    public virtual EmpIssueDetail Item { get; set; } = null!;
 }

@@ -11,5 +11,4 @@ public partial class LoanCardMaster
 
     public int? DurationYears { get; set; }
 
-    public virtual EmpCardDetail Loan { get; set; } = null!;
 }

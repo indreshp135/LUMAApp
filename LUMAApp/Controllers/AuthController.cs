@@ -1,7 +1,9 @@
-﻿using LUMAApp.Models;
+﻿using LUMAApp.Entities;
+using LUMAApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,11 +15,13 @@ namespace LUMAApp.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly Luma1Context _context;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, Luma1Context context)
         {
             Console.WriteLine(configuration.ToString());
             _configuration = configuration;
+            _context = context;
         }
 
         private string GenerateJwtToken(string username, string role, string dept)
@@ -48,18 +52,32 @@ namespace LUMAApp.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public IActionResult Login([FromBody] LoginRequest model)
+        public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
             if (model.EmployeeId == "AD1011" && model.Password == "admin@123")
             {
                 var token = GenerateJwtToken(model.EmployeeId, "Admin", "HR");
                 return StatusCode(200, new { token });
             }
-            return StatusCode(403, new MessageResponse()
+            else
             {
-                Message = "Unauthorised"
-            });
+                var empMaster = await _context.EmpMasters.FindAsync(model.EmployeeId);
+
+                if (empMaster != null && model.Password +" 00:00:00" == empMaster.Dob.ToString())
+                {
+                    var token = GenerateJwtToken(model.EmployeeId, empMaster.Desgn, empMaster.Dept); // Assuming there's no role needed for regular users
+                    return StatusCode(200, new { token });
+                }
+                else
+                {
+                    return StatusCode(403, new MessageResponse()
+                    {
+                        Message = "Unauthorized"
+                    });
+                }
+            }
         }
+
 
         [HttpGet("user")]
         [Authorize]
