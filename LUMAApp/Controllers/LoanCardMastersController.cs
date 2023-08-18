@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LUMAApp.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LUMAApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles ="Admin")]
     public class LoanCardMastersController : ControllerBase
     {
         private readonly Luma1Context _context;
