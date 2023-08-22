@@ -3,7 +3,6 @@ using LUMAApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,9 +14,9 @@ namespace LUMAApp.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly Luma1Context _context;
+        private readonly LmaContext _context;
 
-        public AuthController(IConfiguration configuration, Luma1Context context)
+        public AuthController(IConfiguration configuration, LmaContext context)
         {
             Console.WriteLine(configuration.ToString());
             _configuration = configuration;

@@ -15,9 +15,9 @@ namespace LUMAApp.Controllers
     [Authorize(Roles = "Admin")]
     public class EmpMastersController : ControllerBase
     {
-        private readonly Luma1Context _context;
+        private readonly LmaContext _context;
 
-        public EmpMastersController(Luma1Context context)
+        public EmpMastersController(LmaContext context)
         {
             _context = context;
         }
@@ -89,7 +89,7 @@ namespace LUMAApp.Controllers
         {
           if (_context.EmpMasters == null)
           {
-              return Problem("Entity set 'Luma1Context.EmpMasters'  is null.");
+              return Problem("Entity set 'LmaContext.EmpMasters'  is null.");
           }
             _context.EmpMasters.Add(empMaster);
             try

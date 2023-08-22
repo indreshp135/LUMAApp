@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using LUMAApp.Entities;
+using LUMAApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using LUMAApp.Entities;
-using Microsoft.AspNetCore.Authorization;
 
 namespace LUMAApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Admin")]
+    //[Authorize(Roles ="Admin")]
     public class ItemMastersController : ControllerBase
     {
-        private readonly Luma1Context _context;
+        private readonly LmaContext _context;
 
-        public ItemMastersController(Luma1Context context)
+        public ItemMastersController(LmaContext context)
         {
             _context = context;
         }
@@ -26,10 +22,10 @@ namespace LUMAApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemMaster>>> GetItemMasters()
         {
-          if (_context.ItemMasters == null)
-          {
-              return NotFound();
-          }
+            if (_context.ItemMasters == null)
+            {
+                return NotFound();
+            }
             return await _context.ItemMasters.ToListAsync();
         }
 
@@ -37,10 +33,10 @@ namespace LUMAApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemMaster>> GetItemMaster(string id)
         {
-          if (_context.ItemMasters == null)
-          {
-              return NotFound();
-          }
+            if (_context.ItemMasters == null)
+            {
+                return NotFound();
+            }
             var itemMaster = await _context.ItemMasters.FindAsync(id);
 
             if (itemMaster == null)
@@ -87,10 +83,11 @@ namespace LUMAApp.Controllers
         [HttpPost]
         public async Task<ActionResult<ItemMaster>> PostItemMaster(ItemMaster itemMaster)
         {
-          if (_context.ItemMasters == null)
-          {
-              return Problem("Entity set 'Luma1Context.ItemMasters'  is null.");
-          }
+            if (_context.ItemMasters == null)
+            {
+                return Problem("Entity set 'LmaContext.ItemMasters'  is null.");
+            }
+
             _context.ItemMasters.Add(itemMaster);
             try
             {
@@ -129,6 +126,17 @@ namespace LUMAApp.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("forLoanType")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<ItemMaster>>> GetItemMastersForLoan([FromQuery] ItemsForLoanTypeRequest itemsForLoanTypeRequest)
+        {
+            if (_context.ItemMasters == null)
+            {
+                return NotFound();
+            }
+            return await _context.ItemMasters.Where(i => i.ItemCategory == itemsForLoanTypeRequest.LoanType).ToListAsync();
         }
 
         private bool ItemMasterExists(string id)

@@ -15,15 +15,16 @@ namespace LUMAApp.Controllers
     [Authorize(Roles ="Admin")]
     public class LoanCardMastersController : ControllerBase
     {
-        private readonly Luma1Context _context;
+        private readonly LmaContext _context;
 
-        public LoanCardMastersController(Luma1Context context)
+        public LoanCardMastersController(LmaContext context)
         {
             _context = context;
         }
 
         // GET: api/LoanCardMasters
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<LoanCardMaster>>> GetLoanCardMasters()
         {
           if (_context.LoanCardMasters == null)
@@ -89,7 +90,7 @@ namespace LUMAApp.Controllers
         {
           if (_context.LoanCardMasters == null)
           {
-              return Problem("Entity set 'Luma1Context.LoanCardMasters'  is null.");
+              return Problem("Entity set 'LmaContext.LoanCardMasters'  is null.");
           }
             _context.LoanCardMasters.Add(loanCardMaster);
             try

@@ -19,4 +19,7 @@ public partial class EmpMaster
 
     public DateTime? Doj { get; set; }
 
+    public virtual ICollection<EmployeeCardDetail> EmployeeCardDetails { get; set; } = new List<EmployeeCardDetail>();
+
+    public virtual ICollection<EmployeeIssueDetail> EmployeeIssueDetails { get; set; } = new List<EmployeeIssueDetail>();
 }

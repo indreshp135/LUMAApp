@@ -4,19 +4,16 @@ using LUMAApp.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace LUMAApp.Migrations
 {
-    [DbContext(typeof(Luma1Context))]
-    [Migration("20230816073743_Initial")]
-    partial class Initial
+    [DbContext(typeof(LmaContext))]
+    partial class LmaContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,76 +21,6 @@ namespace LUMAApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("LUMAApp.Entities.EmpCardDetail", b =>
-                {
-                    b.Property<string>("LoanId")
-                        .HasMaxLength(6)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(6)")
-                        .HasColumnName("loan_id");
-
-                    b.Property<DateTime?>("CardIssueDate")
-                        .HasColumnType("date")
-                        .HasColumnName("card_issue_date");
-
-                    b.Property<string>("EmpId")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(6)")
-                        .HasColumnName("emp_id");
-
-                    b.HasKey("LoanId")
-                        .HasName("PK__emp_card__A1F795549BFEAA1D");
-
-                    b.HasIndex("EmpId");
-
-                    b.HasIndex(new[] { "LoanId" }, "uloan_id")
-                        .IsUnique();
-
-                    b.ToTable("emp_card_details", (string)null);
-                });
-
-            modelBuilder.Entity("LUMAApp.Entities.EmpIssueDetail", b =>
-                {
-                    b.Property<string>("IssueId")
-                        .HasMaxLength(6)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(6)")
-                        .HasColumnName("issue_id");
-
-                    b.Property<string>("EmpId")
-                        .HasMaxLength(6)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(6)")
-                        .HasColumnName("emp_id");
-
-                    b.Property<DateTime?>("IssueDate")
-                        .HasColumnType("date")
-                        .HasColumnName("issue_date");
-
-                    b.Property<string>("ItemId")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(6)")
-                        .HasColumnName("item_id");
-
-                    b.Property<DateTime?>("ReturnDate")
-                        .HasColumnType("date")
-                        .HasColumnName("return_date");
-
-                    b.HasKey("IssueId")
-                        .HasName("PK__emp_issu__D6185C39B240E5BE");
-
-                    b.HasIndex("EmpId");
-
-                    b.HasIndex(new[] { "ItemId" }, "uitem_id")
-                        .IsUnique();
-
-                    b.ToTable("emp_issue_details", (string)null);
-                });
 
             modelBuilder.Entity("LUMAApp.Entities.EmpMaster", b =>
                 {
@@ -136,16 +63,74 @@ namespace LUMAApp.Migrations
                         .HasColumnName("gender")
                         .IsFixedLength();
 
-                    b.Property<string>("Passhash")
-                        .HasMaxLength(1)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(1)")
-                        .HasColumnName("passhash");
-
                     b.HasKey("EmpId")
                         .HasName("PK__emp_mast__1299A86157AF7BC0");
 
                     b.ToTable("emp_master", (string)null);
+                });
+
+            modelBuilder.Entity("LUMAApp.Entities.EmployeeCardDetail", b =>
+                {
+                    b.Property<string>("EmpId")
+                        .HasMaxLength(6)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(6)")
+                        .HasColumnName("emp_id");
+
+                    b.Property<string>("LoanId")
+                        .HasMaxLength(6)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(6)")
+                        .HasColumnName("loan_id");
+
+                    b.Property<DateTime?>("CardIssueDate")
+                        .HasColumnType("date")
+                        .HasColumnName("card_issue_date");
+
+                    b.HasKey("EmpId", "LoanId")
+                        .HasName("PK__employee__4886D13468744E9C");
+
+                    b.HasIndex("LoanId");
+
+                    b.ToTable("employee_card_details", (string)null);
+                });
+
+            modelBuilder.Entity("LUMAApp.Entities.EmployeeIssueDetail", b =>
+                {
+                    b.Property<string>("IssueId")
+                        .HasMaxLength(6)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(6)")
+                        .HasColumnName("issue_id");
+
+                    b.Property<string>("EmpId")
+                        .HasMaxLength(6)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(6)")
+                        .HasColumnName("emp_id");
+
+                    b.Property<DateTime?>("IssueDate")
+                        .HasColumnType("date")
+                        .HasColumnName("issue_date");
+
+                    b.Property<string>("ItemId")
+                        .HasMaxLength(6)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(6)")
+                        .HasColumnName("item_id");
+
+                    b.Property<DateTime?>("ReturnDate")
+                        .HasColumnType("date")
+                        .HasColumnName("return_date");
+
+                    b.HasKey("IssueId")
+                        .HasName("PK__employee__D6185C39B647C266");
+
+                    b.HasIndex("EmpId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("employee_issue_details", (string)null);
                 });
 
             modelBuilder.Entity("LUMAApp.Entities.ItemMaster", b =>
@@ -188,6 +173,8 @@ namespace LUMAApp.Migrations
                     b.HasKey("ItemId")
                         .HasName("PK__item_mas__52020FDD153DD1E2");
 
+                    b.HasIndex("ItemCategory");
+
                     b.ToTable("item_master", (string)null);
                 });
 
@@ -204,76 +191,85 @@ namespace LUMAApp.Migrations
                         .HasColumnName("duration_years");
 
                     b.Property<string>("LoanType")
-                        .HasMaxLength(15)
+                        .IsRequired()
+                        .HasMaxLength(20)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(15)")
+                        .HasColumnType("varchar(20)")
                         .HasColumnName("loan_type");
 
                     b.HasKey("LoanId")
                         .HasName("PK__loan_car__A1F79554DD11A340");
 
+                    b.HasIndex(new[] { "LoanType" }, "SET_UNIQUE_LOAN_TYPE")
+                        .IsUnique();
+
                     b.ToTable("loan_card_master", (string)null);
                 });
 
-            modelBuilder.Entity("LUMAApp.Entities.EmpCardDetail", b =>
+            modelBuilder.Entity("LUMAApp.Entities.EmployeeCardDetail", b =>
                 {
                     b.HasOne("LUMAApp.Entities.EmpMaster", "Emp")
-                        .WithMany("EmpCardDetails")
+                        .WithMany("EmployeeCardDetails")
                         .HasForeignKey("EmpId")
                         .IsRequired()
-                        .HasConstraintName("fk1_emp_id");
+                        .HasConstraintName("FK__employee___emp_i__36B12243");
+
+                    b.HasOne("LUMAApp.Entities.LoanCardMaster", "Loan")
+                        .WithMany("EmployeeCardDetails")
+                        .HasForeignKey("LoanId")
+                        .IsRequired()
+                        .HasConstraintName("FK__employee___loan___37A5467C");
 
                     b.Navigation("Emp");
-                });
-
-            modelBuilder.Entity("LUMAApp.Entities.EmpIssueDetail", b =>
-                {
-                    b.HasOne("LUMAApp.Entities.EmpMaster", "Emp")
-                        .WithMany("EmpIssueDetails")
-                        .HasForeignKey("EmpId")
-                        .HasConstraintName("fk_emp_id");
-
-                    b.Navigation("Emp");
-                });
-
-            modelBuilder.Entity("LUMAApp.Entities.ItemMaster", b =>
-                {
-                    b.HasOne("LUMAApp.Entities.EmpIssueDetail", "Item")
-                        .WithOne("ItemMaster")
-                        .HasForeignKey("LUMAApp.Entities.ItemMaster", "ItemId")
-                        .HasPrincipalKey("LUMAApp.Entities.EmpIssueDetail", "ItemId")
-                        .IsRequired()
-                        .HasConstraintName("fk_item_id");
-
-                    b.Navigation("Item");
-                });
-
-            modelBuilder.Entity("LUMAApp.Entities.LoanCardMaster", b =>
-                {
-                    b.HasOne("LUMAApp.Entities.EmpCardDetail", "Loan")
-                        .WithOne("LoanCardMaster")
-                        .HasForeignKey("LUMAApp.Entities.LoanCardMaster", "LoanId")
-                        .IsRequired()
-                        .HasConstraintName("fk_loan_id");
 
                     b.Navigation("Loan");
                 });
 
-            modelBuilder.Entity("LUMAApp.Entities.EmpCardDetail", b =>
+            modelBuilder.Entity("LUMAApp.Entities.EmployeeIssueDetail", b =>
                 {
-                    b.Navigation("LoanCardMaster");
+                    b.HasOne("LUMAApp.Entities.EmpMaster", "Emp")
+                        .WithMany("EmployeeIssueDetails")
+                        .HasForeignKey("EmpId")
+                        .HasConstraintName("FK__employee___emp_i__3A81B327");
+
+                    b.HasOne("LUMAApp.Entities.ItemMaster", "Item")
+                        .WithMany("EmployeeIssueDetails")
+                        .HasForeignKey("ItemId")
+                        .HasConstraintName("FK__employee___item___3B75D760");
+
+                    b.Navigation("Emp");
+
+                    b.Navigation("Item");
                 });
 
-            modelBuilder.Entity("LUMAApp.Entities.EmpIssueDetail", b =>
+            modelBuilder.Entity("LUMAApp.Entities.ItemMaster", b =>
                 {
-                    b.Navigation("ItemMaster");
+                    b.HasOne("LUMAApp.Entities.LoanCardMaster", "ItemCategoryNavigation")
+                        .WithMany("ItemMasters")
+                        .HasForeignKey("ItemCategory")
+                        .HasPrincipalKey("LoanType")
+                        .HasConstraintName("FK_LOAN_TYPE_ITEM_CATEGORY");
+
+                    b.Navigation("ItemCategoryNavigation");
                 });
 
             modelBuilder.Entity("LUMAApp.Entities.EmpMaster", b =>
                 {
-                    b.Navigation("EmpCardDetails");
+                    b.Navigation("EmployeeCardDetails");
 
-                    b.Navigation("EmpIssueDetails");
+                    b.Navigation("EmployeeIssueDetails");
+                });
+
+            modelBuilder.Entity("LUMAApp.Entities.ItemMaster", b =>
+                {
+                    b.Navigation("EmployeeIssueDetails");
+                });
+
+            modelBuilder.Entity("LUMAApp.Entities.LoanCardMaster", b =>
+                {
+                    b.Navigation("EmployeeCardDetails");
+
+                    b.Navigation("ItemMasters");
                 });
 #pragma warning restore 612, 618
         }
