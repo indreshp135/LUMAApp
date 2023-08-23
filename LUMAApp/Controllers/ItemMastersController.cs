@@ -20,6 +20,7 @@ namespace LUMAApp.Controllers
 
         // GET: api/ItemMasters
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<ItemMaster>>> GetItemMasters()
         {
             if (_context.ItemMasters == null)
@@ -31,6 +32,7 @@ namespace LUMAApp.Controllers
 
         // GET: api/ItemMasters/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ItemMaster>> GetItemMaster(string id)
         {
             if (_context.ItemMasters == null)
@@ -50,6 +52,7 @@ namespace LUMAApp.Controllers
         // PUT: api/ItemMasters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutItemMaster(string id, ItemMaster itemMaster)
         {
             if (id != itemMaster.ItemId)
@@ -81,6 +84,7 @@ namespace LUMAApp.Controllers
         // POST: api/ItemMasters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ItemMaster>> PostItemMaster(ItemMaster itemMaster)
         {
             if (_context.ItemMasters == null)
@@ -110,6 +114,7 @@ namespace LUMAApp.Controllers
 
         // DELETE: api/ItemMasters/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteItemMaster(string id)
         {
             if (_context.ItemMasters == null)
@@ -136,6 +141,7 @@ namespace LUMAApp.Controllers
             {
                 return NotFound();
             }
+            Console.WriteLine(itemsForLoanTypeRequest.LoanType);
             return await _context.ItemMasters.Where(i => i.ItemCategory == itemsForLoanTypeRequest.LoanType).ToListAsync();
         }
 

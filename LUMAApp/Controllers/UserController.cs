@@ -1,8 +1,9 @@
 ﻿using LUMAApp.Entities;
 using LUMAApp.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text;
 
 namespace LUMAApp.Controllers
@@ -12,24 +13,58 @@ namespace LUMAApp.Controllers
     public class UserController : ControllerBase
     {
         private LmaContext _context;
-        public UserController(LmaContext context) {
+        public UserController(LmaContext context)
+        {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetContents([FromQuery] UserTablesRequest userTablesRequest)
+        [Authorize]
+        public async Task<ActionResult> GetContents()
         {
-            var employeeId = userTablesRequest.EmployeeId;
+
+            var employeeId = User.FindFirst(ClaimTypes.Name)?.Value;
 
             var employeeCard = await _context.EmployeeCardDetails.Where(e => e.EmpId == employeeId).ToListAsync();
             var employeeIssue = await _context.EmployeeIssueDetails.Where(e => e.EmpId == employeeId).ToListAsync();
 
+            var response = new UserTablesResponse();
+            response.LoanTable = new List<Loan>();
+            response.ItemTable = new List<Item>();
 
-            return Ok(new
+
+            employeeCard.ForEach(e =>
             {
-                employeeCard,
-                employeeIssue
+                var loanDBItem = _context.LoanCardMasters.FirstOrDefault(l => e.LoanId == l.LoanId);
+                var loanItem = new Loan
+                {
+                    Id = loanDBItem.LoanId,
+                    Duration = loanDBItem.DurationYears,
+                    Type = loanDBItem.LoanType,
+                    IssueDate = e.CardIssueDate
+                };
+
+                response.LoanTable.Add(loanItem);
             });
+
+            employeeIssue.ForEach(e =>
+            {
+                var itemDBItem = _context.ItemMasters.FirstOrDefault(l => e.ItemId == l.ItemId);
+                var itemItem = new Item
+                {
+                    Id = itemDBItem.ItemId,
+                    Category = itemDBItem.ItemCategory,
+                    Description = itemDBItem.ItemDescp,
+                    Make = itemDBItem.ItemMake,
+                    Valuation = itemDBItem.ItemValuation
+
+                };
+
+                response.ItemTable.Add(itemItem);
+            });
+
+
+            return Ok(response);
 
         }
 
@@ -51,6 +86,11 @@ namespace LUMAApp.Controllers
         [HttpPost]
         public async Task<ActionResult> SetContents([FromBody] UserFormRequest userFormRequest)
         {
+            var checkExists = _context.EmployeeCardDetails.Any(i => (i.LoanId == userFormRequest.LoanId && i.EmpId == userFormRequest.EmployeeId));
+            if (checkExists)
+            {
+                return Conflict();
+            }
             var cardDetail = new EmployeeCardDetail
             {
                 EmpId = userFormRequest.EmployeeId,
@@ -81,6 +121,6 @@ namespace LUMAApp.Controllers
             _context.SaveChanges();
 
             return Ok("Employee card created and linked successfully." + cardDetail.Emp.EmpId);
-        }                                                       
+        }
     }
 }
